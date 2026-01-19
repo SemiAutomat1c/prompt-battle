@@ -32,14 +32,14 @@ export async function generateComparison(promptA, promptB, topic) {
 
 async function generateWithRetry(systemPrompt, prompt, retries = 3) {
   let lastError;
-  
+
   for (let i = 0; i < retries; i++) {
     try {
       return await generateSingle(systemPrompt, prompt);
     } catch (error) {
       lastError = error;
       const errMsg = error.message || '';
-      
+
       // Retry on 503 (overloaded) or 429 (rate limit)
       if (errMsg.includes('503') || errMsg.includes('overloaded') || errMsg.includes('429')) {
         const waitTime = Math.pow(2, i) * 1000; // Exponential backoff: 1s, 2s, 4s
@@ -47,12 +47,12 @@ async function generateWithRetry(systemPrompt, prompt, retries = 3) {
         await new Promise(resolve => setTimeout(resolve, waitTime));
         continue;
       }
-      
+
       // Don't retry other errors
       throw error;
     }
   }
-  
+
   throw lastError;
 }
 

@@ -45,41 +45,25 @@ body {
   .glass {
     @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-xl;
   }
-  
+
   .glass-dark {
     @apply bg-black/30 backdrop-blur-md border border-white/5 rounded-xl;
   }
 
   .btn-primary {
-    @apply px-6 py-3 bg-gradient-to-r from-battle-blue to-battle-purple 
-           text-white font-semibold rounded-lg
-           hover:from-battle-blue-dark hover:to-battle-purple
-           transition-all duration-300
-           shadow-lg shadow-battle-blue/25
-           hover:shadow-xl hover:shadow-battle-blue/40
-           disabled:opacity-50 disabled:cursor-not-allowed
-           disabled:hover:shadow-lg disabled:hover:shadow-battle-blue/25;
+    @apply px-6 py-3 bg-gradient-to-r from-battle-blue to-battle-purple text-white font-semibold rounded-lg hover:from-battle-blue-dark hover:to-battle-purple transition-all duration-300 shadow-lg shadow-battle-blue/25 hover:shadow-xl hover:shadow-battle-blue/40 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg disabled:hover:shadow-battle-blue/25;
   }
 
   .btn-secondary {
-    @apply px-6 py-3 bg-white/10 text-white font-medium rounded-lg
-           border border-white/20
-           hover:bg-white/20 hover:border-white/30
-           transition-all duration-300;
+    @apply px-6 py-3 bg-white/10 text-white font-medium rounded-lg border border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-300;
   }
 
   .input-field {
-    @apply w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg
-           text-white placeholder-gray-500
-           focus:outline-none focus:border-battle-blue focus:ring-1 focus:ring-battle-blue
-           transition-all duration-300;
+    @apply w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-battle-blue focus:ring-1 focus:ring-battle-blue transition-all duration-300;
   }
 
   .textarea-field {
-    @apply w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg
-           text-white placeholder-gray-500 resize-none
-           focus:outline-none focus:border-battle-blue focus:ring-1 focus:ring-battle-blue
-           transition-all duration-300 font-mono text-sm;
+    @apply w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 resize-none focus:outline-none focus:border-battle-blue focus:ring-1 focus:ring-battle-blue transition-all duration-300 font-mono text-sm;
   }
 }
 
@@ -88,28 +72,30 @@ body {
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
 }
 
 .skeleton {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.05) 25%,
-    rgba(255, 255, 255, 0.1) 50%,
-    rgba(255, 255, 255, 0.05) 75%
-  );
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.05) 25%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0.05) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
 
 /* VS Badge pulse */
 @keyframes vs-pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }
+
   50% {
     transform: scale(1.1);
     opacity: 0.8;
@@ -131,6 +117,7 @@ body {
     transform: translateY(-100vh) rotate(0deg);
     opacity: 1;
   }
+
   100% {
     transform: translateY(100vh) rotate(720deg);
     opacity: 0;
@@ -142,6 +129,7 @@ body {
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
@@ -159,12 +147,10 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.2) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.2) 50%,
+      transparent 100%);
   background-size: 200% 100%;
   animation: vote-shimmer 2s infinite;
   pointer-events: none;
@@ -172,32 +158,38 @@ body {
 
 /* Magic UI & Aceternity UI Animations */
 @layer utilities {
+
   /* Shimmer Button */
   @keyframes shimmer-slide {
     to {
       transform: translate(calc(100cqw - 100%), 0);
     }
   }
-  
+
   @keyframes spin-around {
     0% {
       transform: translateZ(0) rotate(0);
     }
-    15%, 35% {
+
+    15%,
+    35% {
       transform: translateZ(0) rotate(90deg);
     }
-    65%, 85% {
+
+    65%,
+    85% {
       transform: translateZ(0) rotate(270deg);
     }
+
     100% {
       transform: translateZ(0) rotate(360deg);
     }
   }
-  
+
   .animate-shimmer-slide {
     animation: shimmer-slide var(--speed, 3s) ease-in-out infinite alternate;
   }
-  
+
   .animate-spin-around {
     animation: spin-around calc(var(--speed, 3s) * 2) infinite linear;
   }
@@ -208,6 +200,7 @@ body {
       opacity: 0;
       transform: translate(-72%, -62%) scale(0.5);
     }
+
     100% {
       opacity: 1;
       transform: translate(-50%, -40%) scale(1);
@@ -220,10 +213,13 @@ body {
 
   /* Background Beams */
   @keyframes beam {
-    0%, 100% {
+
+    0%,
+    100% {
       opacity: 0.3;
       transform: translateY(0) scaleY(1);
     }
+
     50% {
       opacity: 0.8;
       transform: translateY(-20px) scaleY(1.1);
@@ -239,6 +235,7 @@ body {
     0% {
       transform: translateY(0);
     }
+
     100% {
       transform: translateY(-50%);
     }
@@ -250,10 +247,13 @@ body {
 
   /* Sparkles */
   @keyframes sparkle {
-    0%, 100% {
+
+    0%,
+    100% {
       opacity: 0;
       transform: scale(0);
     }
+
     50% {
       opacity: 1;
       transform: scale(1);
@@ -269,6 +269,7 @@ body {
     0% {
       transform: translateX(-100%) translateY(-100%) rotate(0deg);
     }
+
     100% {
       transform: translateX(100%) translateY(100%) rotate(360deg);
     }
@@ -280,10 +281,14 @@ body {
 
   /* Typing cursor blink */
   @keyframes blink {
-    0%, 50% {
+
+    0%,
+    50% {
       opacity: 1;
     }
-    51%, 100% {
+
+    51%,
+    100% {
       opacity: 0;
     }
   }

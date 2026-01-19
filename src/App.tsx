@@ -32,10 +32,10 @@ export default function App() {
     setPrefillTask(example.task);
     setPrefillPromptA(example.promptA.text);
     setPrefillPromptB(example.promptB.text);
-    
+
     // Scroll to creator
     setTimeout(() => {
-      document.getElementById('battle-creator')?.scrollIntoView({ 
+      document.getElementById('battle-creator')?.scrollIntoView({
         behavior: 'smooth',
         block: 'start'
       });
@@ -103,17 +103,17 @@ export default function App() {
 
     try {
       const result = await api.vote(currentBattle.battleId, choice, currentBattle);
-      
+
       // Update battle with new vote counts
       setCurrentBattle((prev) =>
         prev
           ? {
-              ...prev,
-              votes: result.votes,
-            }
+            ...prev,
+            votes: result.votes,
+          }
           : null
       );
-      
+
       setHasVoted(true);
       setRefreshTrigger((t) => t + 1);
 
@@ -128,7 +128,7 @@ export default function App() {
       });
     } catch (error: any) {
       console.error('Failed to vote:', error);
-      
+
       // Handle "already voted" error gracefully
       if (error.message?.includes('already voted')) {
         setHasVoted(true);
@@ -179,7 +179,7 @@ export default function App() {
         <RetroGrid className="opacity-30" />
         <BackgroundBeams />
       </div>
-      
+
       <Toaster position="top-center" />
 
       {/* Loading overlay */}

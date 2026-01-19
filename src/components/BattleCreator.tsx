@@ -125,7 +125,7 @@ export function BattleCreator({
         </div>
 
         {/* Submit Button */}
-        <div className="text-center">
+        <div className="flex justify-center">
           <ShimmerButton
             type="submit"
             disabled={!isValid || isLoading}
