@@ -66,56 +66,39 @@ export function BattleLoadingOverlay() {
         animate={{ scale: 1 }}
         className="glass p-8 text-center max-w-md mx-4"
       >
-        {/* Animated VS */}
-        <motion.div
-          className="mb-6"
-          animate={{ rotate: [0, 360] }}
-          transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-        >
-          <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-battle-blue via-battle-purple to-battle-red flex items-center justify-center">
-            <span className="text-3xl font-bold text-white">⚔️</span>
+        {/* Animated swords */}
+        <div className="mb-6 relative w-24 h-24 mx-auto">
+          <motion.div
+            className="absolute inset-0 rounded-full bg-gradient-to-br from-battle-blue via-battle-purple to-battle-red opacity-30"
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-4xl">⚔️</span>
           </div>
-        </motion.div>
+        </div>
 
         <h3 className="text-xl font-bold text-white mb-2">
           Generating Battle Outputs
         </h3>
-        <p className="text-gray-400 mb-4">
+        <p className="text-gray-400 mb-6">
           AI is crafting responses for both prompts...
         </p>
 
-        {/* Progress indicators */}
-        <div className="space-y-3">
-          <ProgressItem label="Prompt A" delay={0} />
-          <ProgressItem label="Prompt B" delay={0.5} />
+        {/* Simple progress bar */}
+        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-gradient-to-r from-battle-blue via-battle-purple to-battle-red"
+            initial={{ width: '0%' }}
+            animate={{ width: '100%' }}
+            transition={{ duration: 8, ease: 'easeInOut' }}
+          />
         </div>
+        
+        <p className="text-xs text-gray-500 mt-3">
+          This may take up to 10 seconds...
+        </p>
       </motion.div>
-    </motion.div>
-  );
-}
-
-function ProgressItem({ label, delay }: { label: string; delay: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay }}
-      className="flex items-center gap-3"
-    >
-      <motion.div
-        className="w-4 h-4 rounded-full bg-battle-blue"
-        animate={{ scale: [1, 1.2, 1], opacity: [1, 0.5, 1] }}
-        transition={{ duration: 1, repeat: Infinity }}
-      />
-      <span className="text-sm text-gray-300">{label}</span>
-      <motion.span
-        className="text-xs text-battle-blue"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: delay + 1 }}
-      >
-        Processing...
-      </motion.span>
     </motion.div>
   );
 }
