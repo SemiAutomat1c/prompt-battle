@@ -41,6 +41,7 @@ export interface CreateBattleRequest {
 
 export interface VoteRequest {
   vote: 'A' | 'B' | 'tie';
+  battle?: Battle; // Include battle data for serverless storage workaround
 }
 
 export interface VoteResponse {
@@ -124,10 +125,10 @@ class ApiService {
   /**
    * Cast a vote on a battle
    */
-  async vote(battleId: string, choice: 'A' | 'B' | 'tie'): Promise<VoteResponse> {
+  async vote(battleId: string, choice: 'A' | 'B' | 'tie', battle?: Battle): Promise<VoteResponse> {
     return this.request<VoteResponse>(`/battles/${battleId}/vote`, {
       method: 'POST',
-      body: JSON.stringify({ vote: choice }),
+      body: JSON.stringify({ vote: choice, battle }),
     });
   }
 }

@@ -101,7 +101,7 @@ export default function App() {
     setIsVoting(true);
 
     try {
-      const result = await api.vote(currentBattle.battleId, choice);
+      const result = await api.vote(currentBattle.battleId, choice, currentBattle);
       
       // Update battle with new vote counts
       setCurrentBattle((prev) =>
