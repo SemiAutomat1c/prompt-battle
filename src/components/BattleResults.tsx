@@ -42,18 +42,18 @@ export function BattleResults({
     battle.votes.A > battle.votes.B
       ? 'A'
       : battle.votes.B > battle.votes.A
-      ? 'B'
-      : null;
+        ? 'B'
+        : null;
 
   const winningPercent = winner === 'A' ? percentA : percentB;
   const victoryLevel =
     winningPercent >= VICTORY_THRESHOLDS.DOMINANT * 100
       ? 'DOMINANT'
       : winningPercent >= VICTORY_THRESHOLDS.CLEAR * 100
-      ? 'CLEAR'
-      : winningPercent >= VICTORY_THRESHOLDS.NARROW * 100
-      ? 'NARROW'
-      : null;
+        ? 'CLEAR'
+        : winningPercent >= VICTORY_THRESHOLDS.NARROW * 100
+          ? 'NARROW'
+          : null;
 
   // Copy to clipboard with error handling
   const copyToClipboard = async (text: string, side: 'A' | 'B') => {
@@ -78,11 +78,11 @@ export function BattleResults({
     triggerConfetti({
       particleCount: 80,
       spread: 100,
-      colors: choice === 'A' 
-        ? ['#3b82f6', '#60a5fa', '#93c5fd'] 
-        : choice === 'B' 
-        ? ['#ef4444', '#f87171', '#fca5a5']
-        : ['#fbbf24', '#fcd34d', '#fde68a'],
+      colors: choice === 'A'
+        ? ['#3b82f6', '#60a5fa', '#93c5fd']
+        : choice === 'B'
+          ? ['#ef4444', '#f87171', '#fca5a5']
+          : ['#fbbf24', '#fcd34d', '#fde68a'],
     });
   };
 
@@ -207,7 +207,7 @@ export function BattleResults({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="mt-6 text-center"
+          className="mt-6 flex justify-center"
         >
           <button
             onClick={() => setShowPrompts(!showPrompts)}
@@ -219,7 +219,7 @@ export function BattleResults({
       )}
 
       {/* New battle button */}
-      <div className="mt-8 text-center">
+      <div className="mt-8 flex justify-center">
         <ShimmerButton
           onClick={onNewBattle}
           shimmerColor="#a855f7"
@@ -283,21 +283,20 @@ function OutputCard({
   const bgClass = side === 'A' ? 'bg-battle-blue' : 'bg-battle-red';
   const borderClass = side === 'A' ? 'border-battle-blue' : 'border-battle-red';
   const spotlightColor = side === 'A' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(239, 68, 68, 0.15)';
-  const shineColors = side === 'A' 
-    ? ['#3b82f6', '#60a5fa', '#3b82f6'] 
+  const shineColors = side === 'A'
+    ? ['#3b82f6', '#60a5fa', '#3b82f6']
     : ['#ef4444', '#f87171', '#ef4444'];
 
   const cardContent = (
     <motion.div
-      className={`glass p-6 relative overflow-hidden ${
-        isWinner && hasVoted ? `border-2 ${borderClass}` : ''
-      }`}
+      className={`glass p-6 relative overflow-hidden ${isWinner && hasVoted ? `border-2 ${borderClass}` : ''
+        }`}
       whileHover={{ scale: hasVoted ? 1 : 1.01 }}
     >
       {/* Sparkles for winner */}
       {isWinner && hasVoted && (
-        <Sparkles 
-          color={side === 'A' ? '#3b82f6' : '#ef4444'} 
+        <Sparkles
+          color={side === 'A' ? '#3b82f6' : '#ef4444'}
           count={20}
           size={3}
         />
@@ -355,7 +354,7 @@ function OutputCard({
 
       {/* Response with fade-in animation */}
       <div className="prose prose-invert max-w-none">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: side === 'A' ? 0 : 0.2 }}
@@ -370,11 +369,10 @@ function OutputCard({
         <motion.button
           onClick={onVote}
           disabled={isVoting}
-          className={`mt-6 w-full py-3 rounded-lg font-semibold transition-all ${
-            isVoting
+          className={`mt-6 w-full py-3 rounded-lg font-semibold transition-all ${isVoting
               ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
               : `${bgClass} text-white hover:opacity-90`
-          }`}
+            }`}
           whileHover={{ scale: isVoting ? 1 : 1.02 }}
           whileTap={{ scale: isVoting ? 1 : 0.98 }}
         >
