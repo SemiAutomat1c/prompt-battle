@@ -1,0 +1,171 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0a0f 0%, #0f0f1a 50%, #0a0a0f 100%);
+  background-attachment: fixed;
+}
+
+/* Code/mono text */
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a2e;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3b82f6;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #60a5fa;
+}
+
+/* Glassmorphism base */
+@layer components {
+  .glass {
+    @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-xl;
+  }
+  
+  .glass-dark {
+    @apply bg-black/30 backdrop-blur-md border border-white/5 rounded-xl;
+  }
+
+  .btn-primary {
+    @apply px-6 py-3 bg-gradient-to-r from-battle-blue to-battle-purple 
+           text-white font-semibold rounded-lg
+           hover:from-battle-blue-dark hover:to-battle-purple
+           transition-all duration-300
+           shadow-lg shadow-battle-blue/25
+           hover:shadow-xl hover:shadow-battle-blue/40
+           disabled:opacity-50 disabled:cursor-not-allowed
+           disabled:hover:shadow-lg disabled:hover:shadow-battle-blue/25;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-white/10 text-white font-medium rounded-lg
+           border border-white/20
+           hover:bg-white/20 hover:border-white/30
+           transition-all duration-300;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg
+           text-white placeholder-gray-500
+           focus:outline-none focus:border-battle-blue focus:ring-1 focus:ring-battle-blue
+           transition-all duration-300;
+  }
+
+  .textarea-field {
+    @apply w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg
+           text-white placeholder-gray-500 resize-none
+           focus:outline-none focus:border-battle-blue focus:ring-1 focus:ring-battle-blue
+           transition-all duration-300 font-mono text-sm;
+  }
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 25%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* VS Badge pulse */
+@keyframes vs-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+.vs-badge {
+  animation: vs-pulse 2s ease-in-out infinite;
+}
+
+/* Vote bar animation */
+.vote-bar {
+  transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Confetti keyframes */
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* Vote button shimmer effect */
+@keyframes vote-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.btn-vote-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-vote-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: vote-shimmer 2s infinite;
+  pointer-events: none;
+}
