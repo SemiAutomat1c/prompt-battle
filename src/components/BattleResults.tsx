@@ -6,7 +6,6 @@ import { VoteBar } from './VoteBar';
 import { VICTORY_THRESHOLDS } from '../constants';
 import {
   CardSpotlight,
-  TypingAnimation,
   triggerConfetti,
   ShineBorder,
   Sparkles,
@@ -33,7 +32,6 @@ export function BattleResults({
   const [showPrompts, setShowPrompts] = useState(false);
   const [copiedA, setCopiedA] = useState(false);
   const [copiedB, setCopiedB] = useState(false);
-  const [typingComplete, setTypingComplete] = useState({ A: false, B: false });
 
   const totalVotes = battle.votes.A + battle.votes.B + battle.votes.tie;
   const percentA = totalVotes > 0 ? (battle.votes.A / totalVotes) * 100 : 50;
@@ -136,7 +134,6 @@ export function BattleResults({
           hasVoted={hasVoted}
           isVoting={isVoting}
           showPrompt={showPrompts}
-          onTypingComplete={() => setTypingComplete(prev => ({ ...prev, A: true }))}
         />
 
         {/* VS Badge with Animated Beams */}
@@ -171,7 +168,6 @@ export function BattleResults({
           hasVoted={hasVoted}
           isVoting={isVoting}
           showPrompt={showPrompts}
-          onTypingComplete={() => setTypingComplete(prev => ({ ...prev, B: true }))}
         />
       </div>
 
@@ -265,7 +261,6 @@ interface OutputCardProps {
   hasVoted: boolean;
   isVoting: boolean;
   showPrompt: boolean;
-  onTypingComplete?: () => void;
 }
 
 function OutputCard({
@@ -282,7 +277,6 @@ function OutputCard({
   hasVoted,
   isVoting,
   showPrompt,
-  onTypingComplete,
 }: OutputCardProps) {
   const color = side === 'A' ? 'battle-blue' : 'battle-red';
   const colorClass = side === 'A' ? 'text-battle-blue' : 'text-battle-red';
@@ -359,17 +353,16 @@ function OutputCard({
         )}
       </AnimatePresence>
 
-      {/* Response with Typing Animation */}
+      {/* Response with fade-in animation */}
       <div className="prose prose-invert max-w-none">
-        <div className="text-gray-200 text-sm leading-relaxed max-h-80 overflow-y-auto">
-          <TypingAnimation 
-            text={response} 
-            duration={15}
-            startDelay={side === 'A' ? 0 : 300}
-            onComplete={onTypingComplete}
-            className="whitespace-pre-wrap"
-          />
-        </div>
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: side === 'A' ? 0 : 0.2 }}
+          className="text-gray-200 text-sm leading-relaxed max-h-80 overflow-y-auto whitespace-pre-wrap"
+        >
+          {response}
+        </motion.div>
       </div>
 
       {/* Vote button */}
