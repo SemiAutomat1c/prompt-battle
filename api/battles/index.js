@@ -60,6 +60,15 @@ async function handleCreate(req, res) {
         } 
       });
     }
+    // Check for overloaded
+    if (errMsg.includes('503') || errMsg.includes('overloaded') || errMsg.includes('UNAVAILABLE')) {
+      return res.status(503).json({ 
+        error: { 
+          message: 'AI service is busy. Please try again in a few seconds.',
+          code: 'SERVICE_UNAVAILABLE'
+        } 
+      });
+    }
     // Return actual error for debugging
     return res.status(500).json({ 
       error: { 
