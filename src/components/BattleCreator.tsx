@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { ShimmerButton } from './ui';
 
 interface BattleCreatorProps {
   onCreateBattle: (task: string, promptA: string, promptB: string) => Promise<void>;
@@ -125,12 +126,14 @@ export function BattleCreator({
 
         {/* Submit Button */}
         <div className="text-center">
-          <motion.button
+          <ShimmerButton
             type="submit"
             disabled={!isValid || isLoading}
-            className="btn-primary text-lg px-10 py-4"
-            whileHover={{ scale: isValid && !isLoading ? 1.02 : 1 }}
-            whileTap={{ scale: isValid && !isLoading ? 0.98 : 1 }}
+            shimmerColor="#60a5fa"
+            shimmerSize="0.1em"
+            borderRadius="16px"
+            background="linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)"
+            className="text-lg px-10 py-4 font-bold disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <span className="flex items-center gap-3">
@@ -139,11 +142,11 @@ export function BattleCreator({
               </span>
             ) : (
               <span className="flex items-center gap-2">
-                <span>⚔️</span>
-                <span>Start Battle</span>
+                <span className="text-2xl">⚔️</span>
+                <span>FIGHT!</span>
               </span>
             )}
-          </motion.button>
+          </ShimmerButton>
         </div>
       </form>
     </motion.section>

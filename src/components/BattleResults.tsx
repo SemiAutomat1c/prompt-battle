@@ -4,6 +4,16 @@ import { toast } from 'react-hot-toast';
 import type { Battle } from '../api';
 import { VoteBar } from './VoteBar';
 import { VICTORY_THRESHOLDS } from '../constants';
+import {
+  CardSpotlight,
+  TypingAnimation,
+  triggerConfetti,
+  ShineBorder,
+  Sparkles,
+  BlurFade,
+  BeamConnector,
+  ShimmerButton,
+} from './ui';
 
 interface BattleResultsProps {
   battle: Battle;
@@ -23,6 +33,7 @@ export function BattleResults({
   const [showPrompts, setShowPrompts] = useState(false);
   const [copiedA, setCopiedA] = useState(false);
   const [copiedB, setCopiedB] = useState(false);
+  const [typingComplete, setTypingComplete] = useState({ A: false, B: false });
 
   const totalVotes = battle.votes.A + battle.votes.B + battle.votes.tie;
   const percentA = totalVotes > 0 ? (battle.votes.A / totalVotes) * 100 : 50;
@@ -62,19 +73,34 @@ export function BattleResults({
     }
   };
 
+  // Handle vote with confetti
+  const handleVote = async (choice: 'A' | 'B' | 'tie') => {
+    await onVote(choice);
+    // Trigger confetti on successful vote
+    triggerConfetti({
+      particleCount: 80,
+      spread: 100,
+      colors: choice === 'A' 
+        ? ['#3b82f6', '#60a5fa', '#93c5fd'] 
+        : choice === 'B' 
+        ? ['#ef4444', '#f87171', '#fca5a5']
+        : ['#fbbf24', '#fcd34d', '#fde68a'],
+    });
+  };
+
   // Keyboard shortcuts
   useEffect(() => {
     if (hasVoted || isVoting) return;
 
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === '1') onVote('A');
-      if (e.key === '2') onVote('B');
-      if (e.key === '3') onVote('tie');
+      if (e.key === '1') handleVote('A');
+      if (e.key === '2') handleVote('B');
+      if (e.key === '3') handleVote('tie');
     };
 
     window.addEventListener('keypress', handleKeyPress);
     return () => window.removeEventListener('keypress', handleKeyPress);
-  }, [hasVoted, isVoting, onVote]);
+  }, [hasVoted, isVoting]);
 
   return (
     <motion.section
@@ -84,12 +110,14 @@ export function BattleResults({
       className="max-w-6xl mx-auto px-4 py-8"
     >
       {/* Task header */}
-      <div className="text-center mb-8">
-        <div className="text-sm text-gray-400 uppercase tracking-wide mb-2">
-          The Challenge
+      <BlurFade delay={0.1}>
+        <div className="text-center mb-8">
+          <div className="text-sm text-gray-400 uppercase tracking-wide mb-2">
+            The Challenge
+          </div>
+          <h2 className="text-2xl font-bold text-white">{battle.topic || 'Prompt Battle'}</h2>
         </div>
-        <h2 className="text-2xl font-bold text-white">{battle.topic || 'Prompt Battle'}</h2>
-      </div>
+      </BlurFade>
 
       {/* Results grid */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-6 items-start">
@@ -102,24 +130,28 @@ export function BattleResults({
           percent={percentA}
           isWinner={winner === 'A'}
           victoryLevel={winner === 'A' ? victoryLevel : null}
-          onVote={() => onVote('A')}
+          onVote={() => handleVote('A')}
           onCopy={() => copyToClipboard(battle.promptA, 'A')}
           copied={copiedA}
           hasVoted={hasVoted}
           isVoting={isVoting}
           showPrompt={showPrompts}
+          onTypingComplete={() => setTypingComplete(prev => ({ ...prev, A: true }))}
         />
 
-        {/* VS Badge */}
-        <div className="hidden lg:flex flex-col items-center justify-center py-8">
+        {/* VS Badge with Animated Beams */}
+        <div className="hidden lg:flex flex-col items-center justify-center py-8 gap-4">
+          <BeamConnector direction="left" className="w-20" />
           <motion.div
-            className="w-20 h-20 rounded-full bg-gradient-to-br from-battle-blue via-battle-purple to-battle-red flex items-center justify-center shadow-2xl"
+            className="w-20 h-20 rounded-full bg-gradient-to-br from-battle-blue via-battle-purple to-battle-red flex items-center justify-center shadow-2xl relative"
             animate={{ rotate: [0, 5, -5, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
             <span className="text-2xl font-bold text-white">VS</span>
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-battle-blue via-battle-purple to-battle-red opacity-50 blur-md -z-10" />
           </motion.div>
-          <div className="mt-4 text-xs text-gray-500 font-mono">
+          <BeamConnector direction="right" className="w-20" />
+          <div className="mt-2 text-xs text-gray-500 font-mono">
             #{battle.battleId.slice(0, 8)}
           </div>
         </div>
@@ -133,12 +165,13 @@ export function BattleResults({
           percent={percentB}
           isWinner={winner === 'B'}
           victoryLevel={winner === 'B' ? victoryLevel : null}
-          onVote={() => onVote('B')}
+          onVote={() => handleVote('B')}
           onCopy={() => copyToClipboard(battle.promptB, 'B')}
           copied={copiedB}
           hasVoted={hasVoted}
           isVoting={isVoting}
           showPrompt={showPrompts}
+          onTypingComplete={() => setTypingComplete(prev => ({ ...prev, B: true }))}
         />
       </div>
 
@@ -151,24 +184,26 @@ export function BattleResults({
 
       {/* Vote counts & tie option */}
       {totalVotes > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-8 text-center"
-        >
-          <div className="text-sm text-gray-400">
-            Based on <span className="text-white font-bold">{totalVotes}</span> vote
-            {totalVotes !== 1 ? 's' : ''}
-          </div>
-          {!hasVoted && !isVoting && (
-            <button
-              onClick={() => onVote('tie')}
-              className="mt-3 text-sm text-gray-500 hover:text-gray-300 underline"
-            >
-              Too close to call (3)
-            </button>
-          )}
-        </motion.div>
+        <BlurFade delay={0.3}>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-8 text-center"
+          >
+            <div className="text-sm text-gray-400">
+              Based on <span className="text-white font-bold">{totalVotes}</span> vote
+              {totalVotes !== 1 ? 's' : ''}
+            </div>
+            {!hasVoted && !isVoting && (
+              <button
+                onClick={() => handleVote('tie')}
+                className="mt-3 text-sm text-gray-500 hover:text-gray-300 underline transition-colors"
+              >
+                Too close to call (3)
+              </button>
+            )}
+          </motion.div>
+        </BlurFade>
       )}
 
       {/* Toggle prompts visibility */}
@@ -189,12 +224,18 @@ export function BattleResults({
 
       {/* New battle button */}
       <div className="mt-8 text-center">
-        <button onClick={onNewBattle} className="btn-primary">
+        <ShimmerButton
+          onClick={onNewBattle}
+          shimmerColor="#a855f7"
+          borderRadius="12px"
+          background="rgba(139, 92, 246, 0.2)"
+          className="px-6 py-3 font-semibold"
+        >
           <span className="flex items-center gap-2">
             <span>🔄</span>
             <span>Start New Battle</span>
           </span>
-        </button>
+        </ShimmerButton>
       </div>
 
       {/* Keyboard shortcuts hint */}
@@ -224,6 +265,7 @@ interface OutputCardProps {
   hasVoted: boolean;
   isVoting: boolean;
   showPrompt: boolean;
+  onTypingComplete?: () => void;
 }
 
 function OutputCard({
@@ -240,30 +282,44 @@ function OutputCard({
   hasVoted,
   isVoting,
   showPrompt,
+  onTypingComplete,
 }: OutputCardProps) {
   const color = side === 'A' ? 'battle-blue' : 'battle-red';
   const colorClass = side === 'A' ? 'text-battle-blue' : 'text-battle-red';
   const bgClass = side === 'A' ? 'bg-battle-blue' : 'bg-battle-red';
   const borderClass = side === 'A' ? 'border-battle-blue' : 'border-battle-red';
+  const spotlightColor = side === 'A' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(239, 68, 68, 0.15)';
+  const shineColors = side === 'A' 
+    ? ['#3b82f6', '#60a5fa', '#3b82f6'] 
+    : ['#ef4444', '#f87171', '#ef4444'];
 
-  return (
+  const cardContent = (
     <motion.div
       className={`glass p-6 relative overflow-hidden ${
         isWinner && hasVoted ? `border-2 ${borderClass}` : ''
       }`}
       whileHover={{ scale: hasVoted ? 1 : 1.01 }}
     >
-      {/* Winner badge */}
+      {/* Sparkles for winner */}
+      {isWinner && hasVoted && (
+        <Sparkles 
+          color={side === 'A' ? '#3b82f6' : '#ef4444'} 
+          count={20}
+          size={3}
+        />
+      )}
+
+      {/* Winner badge with BlurFade */}
       <AnimatePresence>
         {isWinner && hasVoted && victoryLevel && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`absolute top-0 right-0 ${bgClass} text-white text-xs font-bold px-3 py-1 rounded-bl-lg`}
-          >
-            {victoryLevel === 'DOMINANT' && '👑 '}
-            WINNER
-          </motion.div>
+          <BlurFade delay={0.2}>
+            <div
+              className={`absolute top-0 right-0 ${bgClass} text-white text-xs font-bold px-3 py-1 rounded-bl-lg z-10`}
+            >
+              {victoryLevel === 'DOMINANT' && '👑 '}
+              WINNER
+            </div>
+          </BlurFade>
         )}
       </AnimatePresence>
 
@@ -303,10 +359,16 @@ function OutputCard({
         )}
       </AnimatePresence>
 
-      {/* Response */}
+      {/* Response with Typing Animation */}
       <div className="prose prose-invert max-w-none">
-        <div className="text-gray-200 whitespace-pre-wrap text-sm leading-relaxed max-h-80 overflow-y-auto">
-          {response}
+        <div className="text-gray-200 text-sm leading-relaxed max-h-80 overflow-y-auto">
+          <TypingAnimation 
+            text={response} 
+            duration={15}
+            startDelay={side === 'A' ? 0 : 300}
+            onComplete={onTypingComplete}
+            className="whitespace-pre-wrap"
+          />
         </div>
       </div>
 
@@ -318,7 +380,7 @@ function OutputCard({
           className={`mt-6 w-full py-3 rounded-lg font-semibold transition-all ${
             isVoting
               ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-              : `${bgClass} text-white hover:opacity-90 btn-vote-shimmer`
+              : `${bgClass} text-white hover:opacity-90`
           }`}
           whileHover={{ scale: isVoting ? 1 : 1.02 }}
           whileTap={{ scale: isVoting ? 1 : 0.98 }}
@@ -334,5 +396,22 @@ function OutputCard({
         </div>
       )}
     </motion.div>
+  );
+
+  // Wrap winner card in ShineBorder
+  if (isWinner && hasVoted) {
+    return (
+      <CardSpotlight spotlightColor={spotlightColor}>
+        <ShineBorder color={shineColors} duration={2} borderWidth={2}>
+          {cardContent}
+        </ShineBorder>
+      </CardSpotlight>
+    );
+  }
+
+  return (
+    <CardSpotlight spotlightColor={spotlightColor}>
+      {cardContent}
+    </CardSpotlight>
   );
 }

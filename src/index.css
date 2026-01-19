@@ -169,3 +169,126 @@ body {
   animation: vote-shimmer 2s infinite;
   pointer-events: none;
 }
+
+/* Magic UI & Aceternity UI Animations */
+@layer utilities {
+  /* Shimmer Button */
+  @keyframes shimmer-slide {
+    to {
+      transform: translate(calc(100cqw - 100%), 0);
+    }
+  }
+  
+  @keyframes spin-around {
+    0% {
+      transform: translateZ(0) rotate(0);
+    }
+    15%, 35% {
+      transform: translateZ(0) rotate(90deg);
+    }
+    65%, 85% {
+      transform: translateZ(0) rotate(270deg);
+    }
+    100% {
+      transform: translateZ(0) rotate(360deg);
+    }
+  }
+  
+  .animate-shimmer-slide {
+    animation: shimmer-slide var(--speed, 3s) ease-in-out infinite alternate;
+  }
+  
+  .animate-spin-around {
+    animation: spin-around calc(var(--speed, 3s) * 2) infinite linear;
+  }
+
+  /* Spotlight */
+  @keyframes spotlight {
+    0% {
+      opacity: 0;
+      transform: translate(-72%, -62%) scale(0.5);
+    }
+    100% {
+      opacity: 1;
+      transform: translate(-50%, -40%) scale(1);
+    }
+  }
+
+  .animate-spotlight {
+    animation: spotlight 2s ease 0.75s 1 forwards;
+  }
+
+  /* Background Beams */
+  @keyframes beam {
+    0%, 100% {
+      opacity: 0.3;
+      transform: translateY(0) scaleY(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: translateY(-20px) scaleY(1.1);
+    }
+  }
+
+  .animate-beam {
+    animation: beam 3s ease-in-out infinite;
+  }
+
+  /* Retro Grid */
+  @keyframes grid {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-50%);
+    }
+  }
+
+  .animate-grid {
+    animation: grid 20s linear infinite;
+  }
+
+  /* Sparkles */
+  @keyframes sparkle {
+    0%, 100% {
+      opacity: 0;
+      transform: scale(0);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .animate-sparkle {
+    animation: sparkle 1.5s ease-in-out infinite;
+  }
+
+  /* Shine Border */
+  @keyframes shine {
+    0% {
+      transform: translateX(-100%) translateY(-100%) rotate(0deg);
+    }
+    100% {
+      transform: translateX(100%) translateY(100%) rotate(360deg);
+    }
+  }
+
+  .animate-shine {
+    animation: shine 3s linear infinite;
+  }
+
+  /* Typing cursor blink */
+  @keyframes blink {
+    0%, 50% {
+      opacity: 1;
+    }
+    51%, 100% {
+      opacity: 0;
+    }
+  }
+
+  .animate-blink {
+    animation: blink 1s infinite;
+  }
+}

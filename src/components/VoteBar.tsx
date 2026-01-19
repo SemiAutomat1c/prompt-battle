@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { NumberTicker } from './ui';
 
 interface VoteBarProps {
   percent: number;
@@ -19,10 +20,10 @@ export function VoteBar({ percent, color, votes, isWinner }: VoteBarProps) {
       {/* Percentage and vote count */}
       <div className="flex justify-between items-center text-sm">
         <span className={`font-bold ${isWinner ? 'text-white' : 'text-gray-400'}`}>
-          {percent.toFixed(1)}%
+          <NumberTicker value={percent} decimalPlaces={1} delay={0.2} />%
         </span>
         <span className="text-gray-500">
-          {votes} vote{votes !== 1 ? 's' : ''}
+          <NumberTicker value={votes} decimalPlaces={0} delay={0.3} /> vote{votes !== 1 ? 's' : ''}
         </span>
       </div>
 
@@ -46,7 +47,7 @@ export function VoteBar({ percent, color, votes, isWinner }: VoteBarProps) {
           className="text-center"
         >
           <span className="text-xs text-battle-gold font-semibold">
-            👑 Dominant Victory!
+            Dominant Victory!
           </span>
         </motion.div>
       )}

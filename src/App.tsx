@@ -8,6 +8,7 @@ import {
   Leaderboard,
   BattleLoadingOverlay,
 } from './components';
+import { BackgroundBeams, RetroGrid } from './components/ui';
 import { api, type Battle } from './api';
 import { EXAMPLE_BATTLES } from './constants';
 
@@ -172,7 +173,13 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="fixed inset-0 -z-10">
+        <RetroGrid className="opacity-30" />
+        <BackgroundBeams />
+      </div>
+      
       <Toaster position="top-center" />
 
       {/* Loading overlay */}
