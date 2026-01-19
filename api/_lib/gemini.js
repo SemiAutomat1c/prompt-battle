@@ -34,7 +34,7 @@ async function generateSingle(systemPrompt, prompt) {
   const fullPrompt = `${systemPrompt}\n\nPrompt: ${prompt}`;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.0-flash',
     contents: fullPrompt,
   });
 
