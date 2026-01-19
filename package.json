@@ -2,7 +2,6 @@
   "name": "promptbattle",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
   "description": "PromptBattle - Compare AI prompts in epic battles",
   "scripts": {
     "dev": "vite",

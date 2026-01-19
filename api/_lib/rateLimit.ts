@@ -6,12 +6,6 @@ import type { RateLimitInfo } from './types';
  */
 class RateLimiter {
   private limits: Map<string, RateLimitInfo> = new Map();
-  private cleanupInterval: NodeJS.Timeout | null = null;
-
-  constructor() {
-    // Clean up expired entries every 5 minutes
-    this.cleanupInterval = setInterval(() => this.cleanup(), 5 * 60 * 1000);
-  }
 
   /**
    * Check if request is allowed
@@ -24,8 +18,15 @@ class RateLimiter {
     const now = Date.now();
     const limitInfo = this.limits.get(key);
 
+    // Clean up expired entry if exists
+    if (limitInfo && now > limitInfo.resetAt) {
+      this.limits.delete(key);
+    }
+
+    const currentInfo = this.limits.get(key);
+
     // No previous requests or window expired
-    if (!limitInfo || now > limitInfo.resetAt) {
+    if (!currentInfo) {
       this.limits.set(key, {
         count: 1,
         resetAt: now + windowMs,
@@ -34,33 +35,14 @@ class RateLimiter {
     }
 
     // Within window
-    if (limitInfo.count < maxRequests) {
-      limitInfo.count++;
+    if (currentInfo.count < maxRequests) {
+      currentInfo.count++;
       return { allowed: true };
     }
 
     // Rate limit exceeded
-    const retryAfter = Math.ceil((limitInfo.resetAt - now) / 1000);
+    const retryAfter = Math.ceil((currentInfo.resetAt - now) / 1000);
     return { allowed: false, retryAfter };
-  }
-
-  /**
-   * Clean up expired entries
-   */
-  private cleanup(): void {
-    const now = Date.now();
-    let removed = 0;
-
-    for (const [key, info] of this.limits.entries()) {
-      if (now > info.resetAt) {
-        this.limits.delete(key);
-        removed++;
-      }
-    }
-
-    if (removed > 0) {
-      console.log(`[RateLimit] Cleaned up ${removed} expired entries`);
-    }
   }
 
   /**
@@ -69,11 +51,6 @@ class RateLimiter {
   getStats() {
     return {
       totalKeys: this.limits.size,
-      entries: Array.from(this.limits.entries()).map(([key, info]) => ({
-        key,
-        count: info.count,
-        resetAt: new Date(info.resetAt).toISOString(),
-      })),
     };
   }
 
@@ -82,15 +59,6 @@ class RateLimiter {
    */
   clear(): void {
     this.limits.clear();
-  }
-
-  /**
-   * Cleanup on shutdown
-   */
-  destroy(): void {
-    if (this.cleanupInterval) {
-      clearInterval(this.cleanupInterval);
-    }
   }
 }
 
