@@ -45,7 +45,27 @@ async function handleCreate(req, res) {
   const battleId = randomUUID();
 
   // Generate AI responses
-  const geminiResult = await generateComparison(promptA, promptB, topic);
+  let geminiResult;
+  try {
+    geminiResult = await generateComparison(promptA, promptB, topic);
+  } catch (error) {
+    console.error('Gemini error:', error);
+    // Check for rate limit
+    if (error.message?.includes('429') || error.message?.includes('quota') || error.message?.includes('RESOURCE_EXHAUSTED')) {
+      return res.status(429).json({ 
+        error: { 
+          message: 'AI rate limit reached. Please wait a moment and try again.',
+          code: 'RATE_LIMIT'
+        } 
+      });
+    }
+    return res.status(500).json({ 
+      error: { 
+        message: 'Failed to generate AI responses. Please try again.',
+        code: 'GEMINI_ERROR'
+      } 
+    });
+  }
 
   const battle = {
     battleId,
