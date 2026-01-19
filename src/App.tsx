@@ -164,26 +164,11 @@ export default function App() {
   }, []);
 
   // Load a specific battle from leaderboard
-  const handleSelectBattle = useCallback(async (battleId: string) => {
-    try {
-      setIsLoading(true);
-      const battle = await api.getBattle(battleId);
-      setCurrentBattle(battle);
-      setHasVoted(false); // Let them vote if they haven't
-      setState('viewing');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch (error) {
-      console.error('Failed to load battle:', error);
-      toast.error('Failed to load battle.', {
-        style: {
-          background: '#1a1a2e',
-          color: '#fff',
-          border: '1px solid rgba(239,68,68,0.3)',
-        },
-      });
-    } finally {
-      setIsLoading(false);
-    }
+  const handleSelectBattle = useCallback((battle: Battle) => {
+    setCurrentBattle(battle);
+    setHasVoted(false); // Let them vote if they haven't
+    setState('viewing');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   return (
@@ -226,6 +211,7 @@ export default function App() {
           <Leaderboard
             refreshTrigger={refreshTrigger}
             onSelectBattle={handleSelectBattle}
+            currentBattle={currentBattle}
           />
         </div>
       </main>

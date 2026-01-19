@@ -19,7 +19,13 @@ export default async function handler(req, res) {
     const battle = getBattle(battleId);
 
     if (!battle) {
-      return res.status(404).json({ error: { message: 'Battle not found', code: 'BATTLE_NOT_FOUND' } });
+      // Return 404 - client should handle this gracefully
+      return res.status(404).json({ 
+        error: { 
+          message: 'Battle not found. Battles are stored temporarily and may have expired.', 
+          code: 'BATTLE_NOT_FOUND' 
+        } 
+      });
     }
 
     return res.status(200).json({
