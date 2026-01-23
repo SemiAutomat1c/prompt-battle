@@ -37,6 +37,7 @@ export interface CreateBattleRequest {
   promptA: string;
   promptB: string;
   topic?: string;
+  apiKey?: string;
 }
 
 export interface VoteRequest {
@@ -63,11 +64,11 @@ class ApiService {
     timeoutMs: number = 60000 // 60 second default timeout
   ): Promise<T> {
     const url = `${API_BASE}${endpoint}`;
-    
+
     // Add timeout with AbortController
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), timeoutMs);
-    
+
     try {
       const response = await fetch(url, {
         ...options,

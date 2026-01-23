@@ -52,7 +52,7 @@ export default function App() {
   }, []);
 
   // Create a new battle
-  const handleCreateBattle = useCallback(async (task: string, promptA: string, promptB: string) => {
+  const handleCreateBattle = useCallback(async (task: string, promptA: string, promptB: string, apiKey?: string) => {
     setIsLoading(true);
     setState('creating');
 
@@ -61,6 +61,7 @@ export default function App() {
         promptA,
         promptB,
         topic: task,
+        apiKey,
       });
 
       setCurrentBattle(battle);

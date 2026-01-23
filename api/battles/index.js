@@ -22,17 +22,17 @@ export default async function handler(req, res) {
     }
   } catch (error) {
     console.error('API Error:', error);
-    return res.status(500).json({ 
-      error: { 
+    return res.status(500).json({
+      error: {
         message: error.message || 'Internal server error',
         code: 'INTERNAL_ERROR'
-      } 
+      }
     });
   }
 }
 
 async function handleCreate(req, res) {
-  const { promptA, promptB, topic, userId } = req.body || {};
+  const { promptA, promptB, topic, userId, apiKey } = req.body || {};
 
   // Validate
   if (!promptA || promptA.length < 10) {
@@ -47,34 +47,34 @@ async function handleCreate(req, res) {
   // Generate AI responses
   let geminiResult;
   try {
-    geminiResult = await generateComparison(promptA, promptB, topic);
+    geminiResult = await generateComparison(promptA, promptB, topic, apiKey);
   } catch (error) {
     console.error('Gemini error:', error.message, error);
     const errMsg = error.message || '';
     // Check for rate limit
     if (errMsg.includes('429') || errMsg.includes('quota') || errMsg.includes('RESOURCE_EXHAUSTED')) {
-      return res.status(429).json({ 
-        error: { 
+      return res.status(429).json({
+        error: {
           message: 'AI rate limit reached. Please wait a moment and try again.',
           code: 'RATE_LIMIT'
-        } 
+        }
       });
     }
     // Check for overloaded
     if (errMsg.includes('503') || errMsg.includes('overloaded') || errMsg.includes('UNAVAILABLE')) {
-      return res.status(503).json({ 
-        error: { 
+      return res.status(503).json({
+        error: {
           message: 'AI service is busy. Please try again in a few seconds.',
           code: 'SERVICE_UNAVAILABLE'
-        } 
+        }
       });
     }
     // Return actual error for debugging
-    return res.status(500).json({ 
-      error: { 
+    return res.status(500).json({
+      error: {
         message: 'Failed to generate AI responses: ' + errMsg,
         code: 'GEMINI_ERROR'
-      } 
+      }
     });
   }
 

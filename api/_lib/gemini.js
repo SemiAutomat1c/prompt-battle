@@ -2,15 +2,31 @@ import { GoogleGenAI } from '@google/genai';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-// Initialize Gemini client
-const ai = GEMINI_API_KEY ? new GoogleGenAI({ apiKey: GEMINI_API_KEY }) : null;
+// Initialize default Gemini client (used when no custom key provided)
+const defaultAi = GEMINI_API_KEY ? new GoogleGenAI({ apiKey: GEMINI_API_KEY }) : null;
+
+/**
+ * Get AI client - either custom or default
+ */
+function getAiClient(customApiKey) {
+  if (customApiKey) {
+    return new GoogleGenAI({ apiKey: customApiKey });
+  }
+  return defaultAi;
+}
 
 /**
  * Generate responses for both prompts in parallel
+ * @param {string} promptA - First prompt
+ * @param {string} promptB - Second prompt
+ * @param {string} topic - Battle topic
+ * @param {string} [customApiKey] - Optional custom Gemini API key
  */
-export async function generateComparison(promptA, promptB, topic) {
+export async function generateComparison(promptA, promptB, topic, customApiKey) {
+  const ai = getAiClient(customApiKey);
+
   if (!ai) {
-    throw new Error('GEMINI_API_KEY is not configured');
+    throw new Error('No API key configured. Please provide your own Gemini API key or contact the administrator.');
   }
 
   const startTime = Date.now();
@@ -19,8 +35,8 @@ export async function generateComparison(promptA, promptB, topic) {
 
   // Generate both responses in parallel with retry
   const [resultA, resultB] = await Promise.all([
-    generateWithRetry(systemPrompt, promptA),
-    generateWithRetry(systemPrompt, promptB),
+    generateWithRetry(ai, systemPrompt, promptA),
+    generateWithRetry(ai, systemPrompt, promptB),
   ]);
 
   return {
@@ -30,12 +46,12 @@ export async function generateComparison(promptA, promptB, topic) {
   };
 }
 
-async function generateWithRetry(systemPrompt, prompt, retries = 3) {
+async function generateWithRetry(ai, systemPrompt, prompt, retries = 3) {
   let lastError;
 
   for (let i = 0; i < retries; i++) {
     try {
-      return await generateSingle(systemPrompt, prompt);
+      return await generateSingle(ai, systemPrompt, prompt);
     } catch (error) {
       lastError = error;
       const errMsg = error.message || '';
@@ -56,7 +72,7 @@ async function generateWithRetry(systemPrompt, prompt, retries = 3) {
   throw lastError;
 }
 
-async function generateSingle(systemPrompt, prompt) {
+async function generateSingle(ai, systemPrompt, prompt) {
   const fullPrompt = `${systemPrompt}\n\nPrompt: ${prompt}`;
 
   const response = await ai.models.generateContent({
